@@ -1,0 +1,33 @@
+#file: noinspection SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection,SpellCheckingInspection
+version: "2"
+# Конфигурация golangci-lint v2
+
+run:
+  timeout: 5m
+  go: '1.25'
+  tests: false
+
+linters:
+  settings:
+    errcheck:
+      check-type-assertions: true
+      check-blank: true
+    govet:
+      enable:
+        - shadow
+    staticcheck:
+      checks: [ "all" ]
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - unused
+    - ineffassign
+  exclusions:
+    paths:
+      - examples
+    rules:
+      - path-except: _test\.go
+        linters:
+          - errcheck
+
