@@ -1,5 +1,9 @@
 # 🤖 Telegnom
 
+[![Go Report Card](https://goreportcard.com/report/github.com/stalkerxxl/telegnom)](https://goreportcard.com/report/github.com/stalkerxxl/telegnom)
+
+> Support Telegram Bot API: [v9.3](https://core.telegram.org/bots/api#december-31-2025) - December 31, 2025 | [Telegram Group](https://t.me/telegnom_chat)
+
 A lightweight and idiomatic Go-framework for the Telegram Bot API. Inspired by Python libraries (Aiogram, Telebot), it provides Go developers with a convenient environment for developing Telegram bots.
 
 ## ✨ Features
@@ -17,7 +21,7 @@ A lightweight and idiomatic Go-framework for the Telegram Bot API. Inspired by P
 - **🪶 Lightweight**: No external dependencies — only the standard Go library.
 - **📃 Documentation**: Code follows GoDoc standards and contains links to the official Telegram Bot API documentation.
 
-# 📚 Content
+## 📚 Content
 
 - [Installation](#-installation)
 - [Quick Start](#-quick-start)
