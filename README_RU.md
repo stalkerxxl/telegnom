@@ -1,4 +1,8 @@
-# 🤖 Telegnom
+# 🤖 Telegnom 
+
+[![Go Report Card](https://goreportcard.com/report/github.com/stalkerxxl/telegnom)](https://goreportcard.com/report/github.com/stalkerxxl/telegnom)
+
+> Support Telegram Bot API: [v9.3](https://core.telegram.org/bots/api#december-31-2025) - December 31, 2025 | [Telegram Group](https://t.me/telegnom_chat)
 
 Легкий и современный фреймворк на Go для Telegram Bot API. Вдохновленный Python-библиотеками (Aiogram, Telebot), он предоставляет Go-разработчикам удобную среду для разработки Telegram-ботов.
 
@@ -17,7 +21,7 @@
 - **🪶 Легкость**: Никаких внешних зависимостей — только стандартная библиотека Go.
 - **📃 Документация**: Код следует стандартам GoDoc и содержит ссылки на официальную документацию Telegram Bot API.
 
-# 📚 Содержание
+## 📚 Содержание
 
 - [Установка](#-установка)
 - [Быстрый старт](#-быстрый-старт)
