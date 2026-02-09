@@ -1,3 +1,7 @@
+// Package filters package provides a collection of common filters for Telegram bot
+// updates, such as checking for the presence of text, media, commands, and more.
+// These filters can be used to easily route updates to the appropriate handlers
+// based on their content and context.
 package filters
 
 import (

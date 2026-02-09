@@ -36,8 +36,9 @@ func (b *Bot) StartPolling() {
 	_ = b.Run()
 }
 
-// StartWebhook starts an HTTP server and the specified number of worker goroutines.
-// This method is blocking and will run until the context provided to NewBot is canceled or the server returns an error.
+// StartWebhook starts an HTTP server and the specified number of worker
+// goroutines. This method is blocking and will run until the context provided to
+// [NewBot] is canceled or the server returns an error.
 func (b *Bot) StartWebhook(addr string) error {
 	return b.startWebhook(addr, "", "")
 }
@@ -108,8 +109,9 @@ func (b *Bot) startWebhook(addr, certFile, keyFile string) error {
 	}
 }
 
-// Run starts the worker goroutines to process updates and blocks until the context is canceled.
-// Use this method when you are receiving updates from an external source (e.g. your own web server).
+// Run starts the worker goroutines to process updates and blocks until the
+// context is canceled. Use this method when you are receiving updates from an
+// external source (e.g. your own web server).
 //
 // Graceful shutdown note: If you are using an external HTTP server, you MUST stop the server
 // (ensure no new requests are being accepted) BEFORE canceling the bot's context.
@@ -138,7 +140,7 @@ func (b *Bot) Run() error {
 	return b.ctx.Err()
 }
 
-// WebhookHandler returns an http.HandlerFunc to be used with a web server.
+// WebhookHandler returns a [net/http.HandlerFunc] to be used with a web server.
 // It handles incoming updates from Telegram via Webhook.
 func (b *Bot) WebhookHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

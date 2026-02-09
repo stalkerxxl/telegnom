@@ -5,8 +5,9 @@ import (
 	"fmt"
 )
 
-// BackgroundFill describes the way a background is filled based on the selected colors.
-// Currently, it can be one of BackgroundFillSolid || BackgroundFillGradient || BackgroundFillFreeformGradient.
+// BackgroundFill describes the way a background is filled based on the selected
+// colors. Currently, it can be one of [BackgroundFillSolid] ||
+// [BackgroundFillGradient] || [BackgroundFillFreeformGradient].
 //
 // See https://core.telegram.org/bots/api#backgroundfill
 type BackgroundFill interface {

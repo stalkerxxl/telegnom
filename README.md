@@ -1,6 +1,6 @@
 # 🤖 Telegnom
 
-[![Go Report Card](https://goreportcard.com/report/github.com/stalkerxxl/telegnom)](https://goreportcard.com/report/github.com/stalkerxxl/telegnom)
+[![Go Report Card](https://goreportcard.com/badge/github.com/stalkerxxl/telegnom)](https://goreportcard.com/report/github.com/stalkerxxl/telegnom)
 
 > Support Telegram Bot API: [v9.3](https://core.telegram.org/bots/api#december-31-2025) - December 31, 2025 | [Telegram Group](https://t.me/telegnom_chat)
 

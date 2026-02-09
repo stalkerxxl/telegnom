@@ -13,6 +13,8 @@ import (
 )
 
 // ResponseParameters contain information about why a request was unsuccessful.
+//
+// See https://core.telegram.org/bots/api#responseparameters
 type ResponseParameters struct {
 	// The group has been migrated to a supergroup with the specified identifier.
 	MigrateToChatID int64 `json:"migrate_to_chat_id,omitempty"`
@@ -20,6 +22,7 @@ type ResponseParameters struct {
 	RetryAfter int `json:"retry_after,omitempty"`
 }
 
+// tgResponse represents the standard response format from Telegram API.
 type tgResponse struct {
 	OK          bool                `json:"ok"`
 	Result      json.RawMessage     `json:"result,omitempty"`
@@ -29,7 +32,6 @@ type tgResponse struct {
 }
 
 // TGError represents an error returned by the Telegram API.
-// It implements the builtin error interface.
 type TGError struct {
 	Code        int                // HTTP-like error code returned by Telegram
 	Description string             // Human-readable description of the error
@@ -58,9 +60,9 @@ func (e *TGError) MigrateTo() (int64, bool) {
 	return 0, false
 }
 
-// apiRequest выполняет запрос к Telegram API.
-// Если в параметрах p есть файлы, метод автоматически переключается на multipart/form-data.
-// Это удобно: вам не нужно следить за тем, какой Content-Type выставить — библиотека сделает это за вас.
+// apiRequest performs a request to the Telegram API.
+// If there are files in the parameters p, the method automatically switches to multipart/form-data.
+// This is convenient: you don't need to monitor what Content-Type to set — the library will do it for you.
 func (b *Bot) apiRequest(method string, p any, res any) error {
 	url := b.buildURL(method)
 	var contentType string
@@ -109,7 +111,7 @@ func (b *Bot) apiRequest(method string, p any, res any) error {
 	return err
 }
 
-// buildURL формирует URL для запроса в Telegram API
+// buildURL builds the URL for the Telegram API request
 func (b *Bot) buildURL(method string) string {
 	if b.testEnv {
 		return b.baseURL + "/test/" + method
@@ -246,7 +248,7 @@ func (b *Bot) prepareMultipartPayload(formFields map[string]any, files []filePay
 				if file.Reader != nil {
 					part, err := mpw.CreateFormFile(file.FieldName, file.FileName)
 					if err != nil {
-						return err
+						return err // FIXME shadow err
 					}
 					_, err = io.Copy(part, file.Reader)
 					return err

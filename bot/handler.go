@@ -13,6 +13,7 @@ type Handler struct {
 	middlewares    []Middleware                  // Local middleware specific to this handler
 }
 
+// addTypeFilter add filters for a specific update type to the handler's typeFilters map.
 func (h *Handler) addTypeFilter(t types.UpdateType, f ...Filter) {
 	if h.typeFilters == nil {
 		h.typeFilters = make(map[types.UpdateType][]Filter)

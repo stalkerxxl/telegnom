@@ -6,15 +6,14 @@ import (
 	"github.com/stalkerxxl/telegnom/types"
 )
 
-// Context представляет контекст текущего обновления.
+// Context represents the context of an update being processed by the bot.
 type Context struct {
 	context.Context
 	Bot     *Bot
 	Update  *types.Update
-	skipped bool // Внутренний флаг: хендлер пропущен фильтром
+	skipped bool // internal flag to indicate if the update was skipped by a handler
 }
 
-// newContext создаёт *Context для обновления (теперь функция, не метод, для гибкости).
 func newContext(bot *Bot, upd *types.Update) *Context {
 	return &Context{
 		Context: bot.ctx,
@@ -23,12 +22,12 @@ func newContext(bot *Bot, upd *types.Update) *Context {
 	}
 }
 
-// Set сохраняет значение, создавая новый дочерний контекст
+// Set stores a value by creating a new child context.
 func (c *Context) Set(key any, value any) {
 	c.Context = context.WithValue(c.Context, key, value)
 }
 
-// Get извлекает значение из цепочки контекстов
+// Get retrieves a value from the context chain.
 func (c *Context) Get(key any) any {
 	return c.Value(key)
 }
@@ -70,7 +69,7 @@ func (c *Context) EffectiveMessage() *types.Message {
 func (c *Context) Send(text string) (*types.Message, error) {
 	chat := c.EffectiveChat()
 	if chat == nil {
-		return nil, nil // FIXME возвращать ошибку
+		return nil, nil // FIXME возвращать ошибку что EffectiveChat == nil
 	}
 	return c.Bot.SendMessage(&SendMessageParams{
 		ChatID: chat.ID,
@@ -82,7 +81,7 @@ func (c *Context) Send(text string) (*types.Message, error) {
 func (c *Context) Reply(text string) (*types.Message, error) {
 	msg := c.EffectiveMessage()
 	if msg == nil {
-		return nil, nil
+		return nil, nil // FIXME возвращать ошибку что EffectiveMessage == nil
 	}
 	return c.Bot.SendMessage(&SendMessageParams{
 		ChatID: msg.Chat.ID,
@@ -97,7 +96,7 @@ func (c *Context) Reply(text string) (*types.Message, error) {
 func (c *Context) Delete() error {
 	msg := c.EffectiveMessage()
 	if msg == nil {
-		return nil
+		return nil // FIXME возвращать ошибку что EffectiveMessage == nil
 	}
 	_, err := c.Bot.DeleteMessage(&DeleteMessageParams{
 		ChatID:    msg.Chat.ID,
@@ -109,7 +108,7 @@ func (c *Context) Delete() error {
 // Answer answers the callback query if present in the update.
 func (c *Context) Answer(text string) error {
 	if c.Update.CallbackQuery == nil {
-		return nil
+		return nil // FIXME возвращать ошибку, что нет callback query в обновлении
 	}
 	_, err := c.Bot.AnswerCallbackQuery(&AnswerCallbackQueryParams{
 		CallbackQueryID: c.Update.CallbackQuery.ID,

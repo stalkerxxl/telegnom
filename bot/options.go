@@ -179,6 +179,8 @@ func WithPanicRecovery() Option {
 }
 
 // WithWebhookSecretToken sets the secret token used for verification of webhook requests.
+//
+// See https://core.telegram.org/bots/api#setwebhook
 func WithWebhookSecretToken(token string) Option {
 	return func(b *Bot) error {
 		b.webhookSecretToken = token
