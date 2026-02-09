@@ -1,3 +1,8 @@
+// Package bot provides functionality for creating and managing Telegram bots.
+// It includes structures for handling updates, routing commands, and middleware,
+// as well as methods for interacting with the Telegram API via HTTP requests.
+// The package supports polling and webhook modes, with options for configuring middleware,
+// error handlers, and debugging. Key components: Bot, Router, Context, and related types.
 package bot
 
 import (

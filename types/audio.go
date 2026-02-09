@@ -1,6 +1,7 @@
 package types
 
 // Audio represents an audio file to be treated as music by the Telegram clients.
+//
 // See https://core.telegram.org/bots/api#audio
 type Audio struct {
 	FileID       string     `json:"file_id"`

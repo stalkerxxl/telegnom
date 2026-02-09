@@ -9,19 +9,20 @@ import (
 	"github.com/stalkerxxl/telegnom/types"
 )
 
-// filePayload для передачи файлов в multipart-запросах.
+// filePayload for transferring files in multipart requests.
 type filePayload struct {
-	FieldName string    // Имя поля в форме (например, "photo", "document")
-	FilePath  string    // Путь к файлу (опционально)
-	Reader    io.Reader // Или готовый reader (опционально)
-	FileName  string    // Имя файла (обязательно для Reader)
+	FieldName string    // Name of the field in the form (e.g., "photo", "document")
+	FilePath  string    // Path to the file (optional)
+	Reader    io.Reader // Or a ready reader (optional)
+	FileName  string    // File name (required for Reader)
 }
 
-// extractMultipart – универсальный помощник, который заменяет долгую ручную
-// сборку полей. Для Python-разработчика это аналог того, как если бы вы
-// использовали inspect или __dict__ для автоматического формирования словаря для
-// requests.post(..., files=files, data=data). В Go это делается через reflection
-// (пакет reflect).
+// extractMultipart (it's a MAGIC 😁) takes a struct with potential *InputFile fields and extracts:
+// 1. A map of field names to values for the API request.
+// 2. A slice of filePayloads for any files that need to be uploaded via multipart/form-data.
+//
+// It handles both top-level *InputFile fields (using the "media" tag) and nested *InputFile fields.
+// For nested files, it assigns unique AttachName values and prepares them for upload.
 func extractMultipart(p any) (map[string]any, []filePayload, error) {
 	fields := make(map[string]any)
 	var files []filePayload
@@ -29,7 +30,7 @@ func extractMultipart(p any) (map[string]any, []filePayload, error) {
 
 	v := reflect.ValueOf(p)
 
-	// Если передан nil (например, GetMe), просто возвращаем пустой результат
+	// If nil or a non-structural type is passed, we return empty fields and files without error.
 	if !v.IsValid() {
 		return fields, files, nil
 	}
@@ -41,23 +42,23 @@ func extractMultipart(p any) (map[string]any, []filePayload, error) {
 		v = v.Elem()
 	}
 
-	// Мы ожидаем структуру для разбора тегов. Если это не структура, возвращаем пусто.
+	// We expect a structure for parsing tags. If this is not a structure, return nil
 	if v.Kind() != reflect.Struct {
 		return fields, files, nil
 	}
 
 	t := v.Type()
 
-	// 1. Сначала рекурсивно ищем все *InputFile, которые нужно загрузить.
-	// Это важно сделать до формирования полей, чтобы у файлов уже были AttachName.
+	// 1. First, recursively search for all *InputFiles that need to be loaded.
+	// It is important to do this before forming the fields so that the files already have an AttachName.
 	var findFiles func(rv reflect.Value)
 	findFiles = func(rv reflect.Value) {
 		if !rv.IsValid() {
 			return
 		}
 
-		// Если мы не можем получить доступ к интерфейсу (поле приватное),
-		// просто пропускаем его, чтобы избежать паники.
+		// If we can't access the interface (the field is private),
+		// just skip it to avoid panic.
 		if !rv.CanInterface() {
 			return
 		}
@@ -67,10 +68,10 @@ func extractMultipart(p any) (map[string]any, []filePayload, error) {
 			if rv.IsNil() {
 				return
 			}
-			// Проверяем, не является ли указатель самим *InputFile
+			// Check if the pointer is *InputFile itself
 			if inputFile, ok := rv.Interface().(*types.InputFile); ok {
 				if inputFile != nil && inputFile.ID == "" && inputFile.URL == "" && (inputFile.Path != "" || inputFile.Reader != nil) {
-					// Если это локальный файл или Reader, и у него еще нет имени аттача
+					// If this is a local file or Reader, and it does not yet have an attachment name
 					if inputFile.AttachName == "" {
 						attachName := fmt.Sprintf("file_%d", fileCounter)
 						fileCounter++
@@ -92,7 +93,7 @@ func extractMultipart(p any) (map[string]any, []filePayload, error) {
 			}
 		case reflect.Struct:
 			for i := 0; i < rv.NumField(); i++ {
-				// Проверяем, экспортируемо ли поле (начинается ли с большой буквы)
+				// Check if the field is exportable
 				if rv.Type().Field(i).PkgPath != "" {
 					continue
 				}
@@ -109,12 +110,12 @@ func extractMultipart(p any) (map[string]any, []filePayload, error) {
 
 	findFiles(v)
 
-	// 2. Формируем мапу полей для запроса
+	// 2. Create a map of fields for the request
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
 		fieldType := t.Field(i)
 
-		// Обработка файлов через тег "media" (верхний уровень)
+		// Process files via the "media" tag (top level)
 		mediaTag := fieldType.Tag.Get("media")
 		if mediaTag != "" {
 			if field.IsNil() {
@@ -139,7 +140,7 @@ func extractMultipart(p any) (map[string]any, []filePayload, error) {
 			continue
 		}
 
-		// Обработка текстовых полей через тег json
+		// Processing text fields via json tag
 		jsonTag := fieldType.Tag.Get("json")
 		if jsonTag == "" || jsonTag == "-" {
 			continue
